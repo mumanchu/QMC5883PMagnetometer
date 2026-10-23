@@ -56,7 +56,7 @@ This is a very sensitive device. Even the magnetic field from the needle of a tr
 
 You can see all these effects if you have a Digital Compass app on your phone. The phone will contain a very similar chip (or maybe even the same one). Most compass apps have a calibration procedure which involves rotating the phone around each axis. Even after calibration, they are not very accurate. They may not work at all if the phone is not horizontal. A traditional hand-held compass is more accurate and far more reliable!
 
-The library's main application is to calculate degrees from north, `getDegreesFromNorth()`. To keep it stable, a number of readings are averaged, see `begin( , uint degreesFromNorthSamples)`. The declination value (secribed in the next section) is used to compensate for the angle between magnetic north and actual north, and can also be used as a calibration factor.
+The library's main application is to calculate degrees from north, `getDegreesFromNorth()`. To keep it stable, a number of readings are averaged, see `begin( , uint degreesFromNorthSamples)`. The declination value (described in the next section) is used to compensate for the angle between actual north and magnetic north, and can also be used as a simple calibration factor.
 
 
 ## Angle of Magnetic Declination and Magnetic Inclination
@@ -77,9 +77,9 @@ Storing the max and min values is not a good idea because these will often be OU
 
 Another difficulty is how to determine when the calibration is complete. Each library implementation does this in a different way. One tries to detect values looping back past the orginal value to determine a full rotation. One just waits 10 seconds and assumes that three full rotations have been done. 
 
-This library has a version called `rotationalCalibration()`, but it's patched out because the results (as with all the other libraries that have implemented this procedure) are very dubious. You can enable it and experiment if you like by un-commenting `//#define QMC5883P_ENABLE_CALIBRATION`. To determine when calibration is complete, this version waits 15 seconds after the last change of a min or max value, then assumes it's complete. An alternative way would be to wait until the range between the min and the max values relates to the ranges produced by the `selfTest()` method, there is some commented-out example code for this.
+This library has a version called `rotationalCalibration()`, but it's patched out because the results (as with all the other libraries that have implemented this procedure) are very dubious. You can enable it and experiment if you like by un-commenting `//#define QMC5883P_ENABLE_CALIBRATION` in the example sketch. To determine when calibration is complete, this library waits 15 seconds after the last change of a min or max value, then assumes it's complete. An alternative way would be to wait until the range between the min and the max values relates to the ranges produced by the `selfTest()` method, there is some commented-out example code for this.
 
-For ideal calibration, you will need a way to accurately rotate the magnetometer and all its electronics about each axis, X, Y, Z. This is difficult to do manually. It really needs a fancy **gimbal-like rotation device**. 
+For an ideal calibration, you will need a way to accurately rotate the magnetometer and all its electronics about each axis, X, Y, Z. This is difficult to do manually. It really needs a fancy **gimbal-like rotation device**. 
 Any wires will make rotation difficult and the position and motion of the wires themselves will affect the fields, so you'll need WiFi or Bluetooth communications, which may affect the fields even more.
 The proximity of batteries, motors and mounting bolts also has a huge (and variable) effect. 
 
@@ -89,7 +89,7 @@ The few descriptions I have found about magnetometer calibration all show circul
 <img alt="image" src="images/excel.png" />
 
 
-However, I think it's easier to visualise it if a simple straight-line plot is used for each axis.
+However, I think it's easier to visualise if a simple straight-line plot is used for each axis.
 
 When multiple readings are taken and the maximum and minimum values are saved, you will see that the max and min values for each channel are not the same. This is because of the directional effects of nearby magnetic fields (hard effects) and nearby non-magnetic metallic objects which distort the Earth's magnetic field (soft effects). Some differences may be from irregularities within the chip itself. The chip cannot tell the difference, it just sees the accumulated effects on each reading.
 
@@ -129,11 +129,11 @@ The Z-axis is not needed for a simple compass application. Can the Z-axis can be
 
 ## Installing the Library with the Arduino IDE
 
-Search for 'mumanchu' in the Arduino IDE's Library Manager and see if the QMC5883PMagnetometer library is there. If found, just install it from there.
+Search for 'mumanchu' in the Arduino IDE's Library Manager and see if the `QMC5883PMagnetometer` library is there. If found, just install it from there.
 
-If not, download the latest Zip file via the green button on this library's Github screen, "<> Code / Download Zip". This creates a file called "QMC5883PMagnetometer-main.zip" in your Downloads directory.
+If not, download the latest Zip file via using green button on this library's Github screen, "<> Code / Download Zip". This creates a file called "QMC5883PMagnetometer-main.zip" in your Downloads directory.
 
-Now open the Arduino IDE. Select menu item "Sketch / Include Library > Add ZIP Library...". This opens the "Select ZIP File" window. Open the Downloads directory and choose the "QMC5883PMagnetometer-main.zip" file you just downloaded. You should see a "Successfully installed library" popup on the bottom right.
+Now open the Arduino IDE. Select menu item "Sketch / Include Library > Add ZIP Library...". This opens the "Select ZIP File" window. Open the Downloads directory and choose the "QMC5883PMagnetometer-main.zip" file you just downloaded. You should see a "Successfully installed library" message.
 
 To open the example sketch, select menu item "File > Examples" and scroll down beyond "Examples from Custom Libraries" and choose the "QMC5883PMagnetometer > QMC5883PMagnetometer" entry. This opens the "QMC5883PMagnetometer.ino" example sketch in a new Arduino IDE window.
 
@@ -141,7 +141,7 @@ To open the example sketch, select menu item "File > Examples" and scroll down b
 
 To find out what each method does, open the [QMC5883PMagnetometer.h](src/QMC5883PMagnetometer.h) file and read the comments for each method. The rest is explained in the data sheet, so I won't reproduce it here.
 
-The library's main application is to calculate degrees from north, `getDegreesFromNorth()`. To keep it stable, a number of readings are averaged, see `begin( , uint degreesFromNorthSamples)`. 
+The library's main application is to calculate degrees from north, `getDegreesFromNorth()`. To keep it stable, a number of readings are averaged, see `begin( , uint degreesFromNorthSamples)`. See `RollingAverage.h`.
 
 
 ```cpp
@@ -194,6 +194,15 @@ P16 of the data sheet states, "an inner-built current is generated and an additi
 
 I think the self test results are actually 'range' values. These are the ranges produced by an on-chip-generated field of about 1 Gauss, which overrides any weaker external fields. These can be used as ball-park range values (instead of the calibration), remembering that the Earth's magnetic field is less than 1 Gauss. What we do not get from the self test are the 'offsets'.
 
+I think the self test does this for each axis,
+- Take a measurement of the ambient field
+- Generate an approximate 1Gauss offset field and take another measurement
+- Save the difference between the two measurements, this is the 'range' value for the axis
+
+The self test can also be used for temperature compensation. This is what it says in the HMC5883L data sheet, 
+
+"_The built-in self test can also be used to periodically compensate the scaling errors due to temperature variations. A compensation factor can be found by comparing the self test outputs with the ones obtained at a known temperature. For example, if the self test output is 400 at room temperature and 300 at the current temperature then a compensation factor of (400/300) should be applied to all current magnetic readings. A temperature sensor is not required using this method._"
+
 
 
 ## Set/Reset Mode
@@ -224,11 +233,14 @@ https://cdn-shop.adafruit.com/datasheets/HMC5883L_3-Axis_Digital_Compass_IC.pdf
 **QMC5882P Manufacturer's Website Page** \
 https://www.qstcorp.com/en_comp_prod/QMC5883P
 
-<!--
+**ArduPilot Magnetometer Code** \
+This is the best code that I found, with the best calibration. It supports several different chips. This is the complexity you need to make these chips work reliably in a drone. \
+https://github.com/ArduPilot/ardupilot/tree/master/libraries/AP_Compass
+
 **Micropython Library** \
-I never use Python, but this implements the rotate calibration procedure,
+I never use [Monty] Python, but this implements a very simple version of the rotation calibration procedure,
 https://github.com/Turbofan3360/ESP32-Micropython-GY-271-QMC5883P-Driver
--->
+
 
 
 ## Revision History
