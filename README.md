@@ -130,16 +130,16 @@ To recover, I added a `resetI2C()` method to the example sketch.
 
 ## Solar Tracker Application
 
-My application was for a rudimentary compass on an outdoor Solar Tracker, to give some verification that it's pointing in the right direction. The magnetometer will be mounted close to large motors and metal mounting brackets, which will have major effects on the accuracy. The motors are permanent magnet motors, causing huge 'hard field' problems even when they are not running. Both the proximity of the motors and of the mounting brackets (soft field) will change as the positioning system moves about. The calibration is _variable_. The traditional calibration methods will not work.
+My application is for a rudimentary compass on an outdoor Solar Tracker, to give some verification that it's pointing in the right direction. The magnetometer will be mounted close to large motors and metal mounting brackets, which will have major effects on the accuracy. The motors are permanent magnet motors, causing huge 'hard field' problems even when they are not running. Both the proximity of the motors and of the mounting brackets (soft field) will change as the positioning system moves about. The calibration is _variable_. The traditional calibration methods will not work.
 
-For my application, `getDegreesFromNorth()` is the important method. This doesn't really need complicated calibration. It can all be done with the declination offset, which can be varied a bit according to the position of the motors and brackets. A simple look-up table can be used for that.
+For my application, `getDegreesFromNorth()` is the important method. This doesn't really need complicated calibration. It can all be done with the declination offset, which can be varied a bit according to the position of the motors and brackets. A simple look-up table will be used for that.
 
 The Z-axis is not used for a compass application, because the horizontal position of the sensor does not change. Can the Z-axis can be used to compensate the X and Y axes for the variable hard and soft fields? This will be checked soon...
 
 
 ## Installing the Library with the Arduino IDE
 
-Search for 'mumanchu' in the Arduino IDE's Library Manager and see if the `QMC5883PMagnetometer` library is there. If found, just install it from there.
+Search for 'mumanchu' in the Arduino IDE's Library Manager and look for the `QMC5883PMagnetometer` library. If found, just install it from there.
 
 If not, download the latest Zip file via using green button on this library's Github screen, "<> Code / Download Zip". This creates a file called "QMC5883PMagnetometer-main.zip" in your Downloads directory.
 
@@ -208,13 +208,10 @@ I think the self test results are actually 'range' values. These are the ranges 
 
 I think the self test does this for each axis,
 - Take a measurement of the ambient field
-- Generate an approximate 1Gauss offset field and take another measurement
+- Generate an approximate 1 Gauss offset field and take another measurement
 - Save the difference between the two measurements, this is the 'range' value for the axis
 
-The self test can also be used for temperature compensation. This is what it says in the HMC5883L data sheet, 
-
-"_The built-in self test can also be used to periodically compensate the scaling errors due to temperature variations. A compensation factor can be found by comparing the self test outputs with the ones obtained at a known temperature. For example, if the self test output is 400 at room temperature and 300 at the current temperature then a compensation factor of (400/300) should be applied to all current magnetic readings. A temperature sensor is not required using this method._"
-
+The older QMC5883L data sheet suggested using the self-test results for temperature compensation. This is not necessary with the new QMC5883P, which does the temperatire compensation automatically.
 
 
 ## Set/Reset Mode
