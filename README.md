@@ -36,7 +36,7 @@ On the chip's website page, QST Corp states, "Software and Algorithm Support Ava
 
 ## Using a 3-Axis Magnetometer as a Compass
 
-These devices are useful for detecting the strength and direction of a magnetic field, but because of their sensitivity to external fields they may not be reliable as compasses.
+These devices are useful for detecting the strength and direction of a magnetic field, but because of their sensitivity to external fields they may not always be super-accurate as compasses.
 
 The Earth's magnetic field strength is between 0.25 and 0.65 Gauss. The chip's three axes have three ranges, +-30 Gauss, +-12, +-8, and +-2 Gauss. So +-2 Gauss is a sensible range for a compass application, leaving some headroom for small external magnetic fields.
 
@@ -50,20 +50,20 @@ X             0                   0
 Y   0                   0                   0
 ```
 
-You will also need to add 'tilt' compensation if the sensor is always perfectly horizontal. An Accelerometer is often used for this, but that introduces even more variables. Accelerometers also have their own 'calibration problems'.
+You will also need to add 'tilt' compensation if the sensor is not always perfectly horizontal. An Accelerometer is often used for this, but that introduces even more variables. Accelerometers also have their own calibration problems.
 
 This is a very sensitive device. Even the magnetic field from the needle of a traditional hand-held compass will affect the readings. It is also dramatically affected by being close to any electronic, magnetic or metallic objects. If your mobile phone is close by, forget it. Even non-magnetic metals will distort the Earth's magnetic field and distort the readings. Being inside a building with steel reinforcements in the concrete walls distorts the readings too. The horizontal level also has a major effect on the X/Y axis readings.
 
 You can see all these effects if you have a Digital Compass app on your phone. The phone will contain a very similar chip (or maybe even the same one). Most compass apps have a calibration procedure which involves rotating the phone around each axis. Even after calibration, they are not very accurate. They may not work at all if the phone is not horizontal. A traditional hand-held compass is more accurate and far more reliable!
 
-The library's main application is to calculate degrees from north, `getDegreesFromNorth()`. To keep it stable, a number of readings are averaged, see `begin( , uint degreesFromNorthSamples)`. 
+The library's main application is to calculate degrees from north, `getDegreesFromNorth()`. To keep it stable, a number of readings are averaged, see `begin( , uint degreesFromNorthSamples)`. The declination value (secribed in the next section) is used to compensate for the angle between magnetic north and actual north, and can also be used as a calibration factor.
 
 
 ## Angle of Magnetic Declination and Magnetic Inclination
 
 The Earth's magnetic north is rarely at the North Pole. It moves about regularly (polar wandering), usually within a few degress. But every 450'000 years (+-450'000 years) it flips completely. All compasses will then be pointing South instead of North. We are well overdue for the next flip. But don't worry, it takes between 1000 and 10000 years to flip completely, so we should have time to update our software. Most hand-held compasses have a rotating dial that points to true North, so just rotate the dial 180 degrees and you're back in business.
 
-To find the direction of true north, you will need to know the 'angle of magnetic declinantion', which is the angle between magnetic north and true north on the Earth's surface. This varies according to your location and the current location of the wandering magnetic north.
+To find the direction of true north, you will need to know the 'angle of magnetic declination', which is the angle between magnetic north and true north on the Earth's surface. This varies according to your location and the current location of the wandering magnetic north.
 
 To find out the magnetic declination of your current location (on planet Earth), use NOAA's magnetic declination calculator, \
 https://www.ngdc.noaa.gov/geomag/calculators/magcalc.shtml#declination
@@ -77,12 +77,11 @@ Storing the max and min values is not a good idea because these will often be OU
 
 Another difficulty is how to determine when the calibration is complete. Each library implementation does this in a different way. One tries to detect values looping back past the orginal value to determine a full rotation. One just waits 10 seconds and assumes that three full rotations have been done. 
 
-This library has a version called `rotationalCalibration()`, but it's patched out because the results (as with all the other libraries) are very dubious. You can enable it and experiment if you like by un-commenting `//#define QMC5883P_ENABLE_CALIBRATION`. To determine when calibration is complete, this version waits 15 seconds after the last change of a min or max value, then assumes it's complete. An alternative way would be to wait until the range between the min and the max value relates to the range values produced by the `selfTest()` method, there is some commented-out example code for this.
+This library has a version called `rotationalCalibration()`, but it's patched out because the results (as with all the other libraries that have implemented this procedure) are very dubious. You can enable it and experiment if you like by un-commenting `//#define QMC5883P_ENABLE_CALIBRATION`. To determine when calibration is complete, this version waits 15 seconds after the last change of a min or max value, then assumes it's complete. An alternative way would be to wait until the range between the min and the max values relates to the ranges produced by the `selfTest()` method, there is some commented-out example code for this.
 
 For ideal calibration, you will need a way to accurately rotate the magnetometer and all its electronics about each axis, X, Y, Z. This is difficult to do manually. It really needs a fancy **gimbal-like rotation device**. 
 Any wires will make rotation difficult and the position and motion of the wires themselves will affect the fields, so you'll need WiFi or Bluetooth communications, which may affect the fields even more.
 The proximity of batteries, motors and mounting bolts also has a huge (and variable) effect. 
-
 
 The few descriptions I have found about magnetometer calibration all show circular plots for the readings of the three axes, using X/Y, X/Z and Y/Z axes for each plot. Before calibration, the three circular plots are in different positions. After calibration, the three circular plots are nicely superimposed over each other. If you're interested in seeing this yourself, you can use Excel for the visualisation. Create a CSV file with a `Serial.println()` statement in `rotationalCalibration()`. Import the CSV file into Excel and create three charts using the X/Y, X/Z and Y/Z axes. You will need to modify the charts to use the same axis scales for each plot, e.g. -1000..0..+1000.
 
