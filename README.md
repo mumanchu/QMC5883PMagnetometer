@@ -77,7 +77,7 @@ Storing the max and min values is not a good idea because these will often just 
 
 Another difficulty is how to determine when the calibration is complete. Each library implementation does this in a different way. One tries to detect values looping back past the orginal value to determine a full rotation. One just waits 10 seconds and assumes that three full rotations have been done. Probably the best way is to detect even coverage of the surface of that sphere mentioned in the previous paragraph.
 
-This library has a basic `rotationCalibration()` method, but it's patched out because the results (as with all the other libraries that have implemented this method) are very dubious. You can enable it and experiment if you like, by un-commenting `//#define QMC5883P_ENABLE_CALIBRATION` in the example sketch. To determine when calibration is complete, this version just waits 15 seconds after the last change of a min or max value, then assumes it's complete. An alternative would be to wait until the range between the min and the max values relates to the ranges produced by the `selfTest()` method, there is some commented-out example code for this.
+This library has a basic `rotationCalibration()` method, but it's patched out because the results (as with all the other libraries that have implemented this method) are very dubious. You can enable it and experiment if you like, by un-commenting `//#define QMC5883P_ENABLE_CALIBRATION` in the example sketch. To determine when calibration is complete, this version just waits 10 seconds after the last change of a min or max value, then assumes it's complete. An alternative would be to wait until the range between the min and the max values relates to the ranges produced by the `selfTest()` method, there is some commented-out example code for this.
 
 For an ideal calibration, you will need a way to accurately rotate the magnetometer and all its electronics about each axis, X, Y, Z. This is difficult to do manually. It really needs a fancy **gimbal-like rotation device**.  Any wires will make rotation difficult and the position and motion of the wires themselves will affect the fields, so you'll need WiFi or Bluetooth communications, which may affect the fields even more. The proximity of batteries, motors and mounting bolts also has a huge (and variable) effect. 
 
@@ -89,7 +89,7 @@ The few descriptions I have found about magnetometer calibration all show circul
 
 However, I think it's easier to visualise if a simple straight-line plot is used for each axis.
 
-When multiple readings are taken and the maximum and minimum values are saved, you will see that the max and min values for each channel are not the same. This is because of the directional effects of nearby magnetic fields (hard effects) and nearby non-magnetic metallic objects which distort the Earth's magnetic field (soft effects). Some differences may be from irregularities within the chip itself. The chip cannot tell the difference, it just sees the accumulated effects on each reading.
+When multiple readings are taken and the maximum and minimum values are saved, you will see that the max and min values for each channel are not the same. This is because of the directional effects of nearby magnetic fields (hard effects) and nearby non-ferrous metallic objects which distort the Earth's magnetic field (soft effects). Some differences may be from irregularities within the chip itself. The chip cannot tell the difference, it just sees the accumulated effects on each reading.
 
 
 **Raw axis readings before calibration**
@@ -118,16 +118,23 @@ Z        zzzzzzzzzzzzz
          |---scale---|
 ```
 
-This calibration method is not recommened.
+This calibration method is not recommended, unless you can remove the outliers.
 
 
-## Solar Tracker
+## I2C Lockups
 
-My application was for a rudimentary compass on an outdoor Solar Tracker, to give some verification that it's pointing in the right direction. The magnetometer may be mounted close to large motors and metal mounting brackets, which will have major effects on the accuracy. The motors are permanent magnet stepper motors, causing huge 'hard field' problems even when they are not running. Both the proximity of the motors and of the mounting brackets will change as the positioning system moves about. The calibration is _variable_. The traditional calibration methods will not work.
+The I2C bus was locked regularly by this chip if there was an intermittent connection on the I2C bus. This happened a lot while waving the sensor around during calibration. The I2C bus locks when the chip permanently holds SDA (the data line) low. If there is an error, the chip should always release the bus. I suspect this is a design issue within the chip. Perhaps these cheap chips are from batches with an error in the silicon. 
 
-For me, `getDegreesFromNorth()` is the important method. This doesn't really need complicated calibration, it can all be done with the declination offset (which can be varied a bit according to the position).
+To recover, I added a `resetI2C()` method to the example sketch.
 
-The Z-axis is not needed for a simple compass application. Can the Z-axis can be used to compensate the X and Y axes for the variable hard and soft fields? This will be checked soon...
+
+## Solar Tracker Application
+
+My application was for a rudimentary compass on an outdoor Solar Tracker, to give some verification that it's pointing in the right direction. The magnetometer will be mounted close to large motors and metal mounting brackets, which will have major effects on the accuracy. The motors are permanent magnet motors, causing huge 'hard field' problems even when they are not running. Both the proximity of the motors and of the mounting brackets (soft field) will change as the positioning system moves about. The calibration is _variable_. The traditional calibration methods will not work.
+
+For my application, `getDegreesFromNorth()` is the important method. This doesn't really need complicated calibration. It can all be done with the declination offset, which can be varied a bit according to the position of the motors and brackets. A simple look-up table can be used for that.
+
+The Z-axis is not used for a compass application, because the horizontal position of the sensor does not change. Can the Z-axis can be used to compensate the X and Y axes for the variable hard and soft fields? This will be checked soon...
 
 
 ## Installing the Library with the Arduino IDE
@@ -254,8 +261,7 @@ I never use Monty Python, but this implements a very simple version of the rotat
 https://github.com/Turbofan3360/ESP32-Micropython-GY-271-QMC5883P-Driver
 
 **Adafruit Library** \
-This minimalist Adafruit library is not recommended. The code for both I2C and SPI is present, even if you don't use SPI. \
-It uses the unnecessary 'Adafruit_BusIO_Register' class, whose constructors generate lots of additional code, when a line or two of simple logic would do the same thing. \
+This minimalist Adafruit library is not recommended. The code for both I2C and SPI is present, even if you don't use SPI. It uses the unnecessary 'Adafruit_BusIO_Register' class, whose constructors generate lots of additional code, when a line or two of simple logic would do the same thing. \
 https://github.com/adafruit/Adafruit_QMC5883P
 
 
