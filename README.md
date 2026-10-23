@@ -1,10 +1,6 @@
 # Arduino Library for QMC5883P 3-Axis Magnetometer
 
-**_PRELIMINARY - May change without notice, improvements in progress, especially for calibration_**
-
 The QMC5883P is the latest 3-Axis Magnetometer from QST Corporation. It supercedes the QMC5883L, and the original Honeywell HMC5883L (now obsolete). 
-
-On the chip's website page, QST Corp states, "Software and Algorithm Support Available". I tried to contact QST Corp for more details, but have received no response. There's a link to the manufacturer's data sheet and website at the end of this page. Their website looks unfinished and/or unmaintained.
 
 <img width="300" alt="image" src="https://github.com/user-attachments/assets/18f1179d-1486-4ee3-a426-c4122350966e" />
 
@@ -35,8 +31,10 @@ Connect the board with 3V3, GND, SDA and SCL (some boards also support 5V Arduin
   }
 ```
 
+On the chip's website page, QST Corp states, "Software and Algorithm Support Available". I tried to contact QST Corporation for more details, but did not receive a response. There's a link to the manufacturer's data sheet and website at the end of this page. Their website looks unfinished and/or unmaintained.
 
-## Using a 3-Axis Magnetometer as a ~~Brick~~ Compass
+
+## Using a 3-Axis Magnetometer as a Compass
 
 These devices are useful for detecting the strength and direction of a magnetic field, but because of their sensitivity to external fields they may not be reliable as compasses.
 
@@ -54,6 +52,12 @@ Y   0                   0                   0
 
 You will also need to add 'tilt' compensation if the sensor is always perfectly horizontal. An Accelerometer is often used for this, but that introduces even more variables. Accelerometers also have their own 'calibration problems'.
 
+This is a very sensitive device. Even the magnetic field from the needle of a traditional hand-held compass will affect the readings. It is also dramatically affected by being close to any electronic, magnetic or metallic objects. If your mobile phone is close by, forget it. Even non-magnetic metals will distort the Earth's magnetic field and distort the readings. Being inside a building with steel reinforcements in the concrete walls distorts the readings too. The horizontal level also has a major effect on the X/Y axis readings.
+
+You can see all these effects if you have a Digital Compass app on your phone. The phone will contain a very similar chip (or maybe even the same one). Most compass apps have a calibration procedure which involves rotating the phone around each axis. Even after calibration, they are not very accurate. They may not work at all if the phone is not horizontal. A traditional hand-held compass is more accurate and far more reliable!
+
+The library's main application is to calculate degrees from north, `getDegreesFromNorth()`. To keep it stable, a number of readings are averaged, see `begin( , uint degreesFromNorthSamples)`. 
+
 
 ## Angle of Magnetic Declination and Magnetic Inclination
 
@@ -63,15 +67,6 @@ To find the direction of true north, you will need to know the 'angle of magneti
 
 To find out the magnetic declination of your current location (on planet Earth), use NOAA's magnetic declination calculator, \
 https://www.ngdc.noaa.gov/geomag/calculators/magcalc.shtml#declination
-
-
-## Sensitivity
-
-This is a very sensitive device. Even the magnetic field from the needle of a traditional hand-held compass will affect the readings. It is also dramatically affected by being close to any electronic, magnetic or metallic objects. If your mobile phone is close by, forget it. Even non-magnetic metals will distort the Earth's magnetic field and distort the readings. Being inside a building with steel reinforcements in the concrete walls distorts the readings too. The horizontal level also has a major effect on the X/Y axis readings.
-
-You can see all these effects if you have a Digital Compass app on your phone. The phone will contain a very similar chip (or maybe even the same one). Most compass apps have a calibration procedure which involves rotating the phone around each axis. Even after calibration, they are not very accurate. They may not work at all if the phone is not horizontal. A traditional hand-held compass is more accurate and far more reliable!
-
-These chips are far too sensitive to provide meaningful results without some kind of very sophisticated non-linear intelligent compensation. In drones, I imagine it is almost impossible to get reliable direction readings from a magnetometer.
 
 
 ## Rotational Calibration
@@ -128,15 +123,16 @@ Z        zzzzzzzzzzzzz
 
 ### Solar Tracker
 
-My application is for a compass on an outdoor Solar Tracker, to give some verification that it's pointing in the right direction. The magnetometer may be mounted close to large motors and metal mounting brackets, which will have major effects on the accuracy. The motors are permanent magnet stepper motors, causing huge 'hard field' problems even when they are not running. Both the proximity of the motors and of the mounting brackets will change as the positioning system moves about. The calibration is _variable_. The traditional calibration methods _will not work_.
+My application was for a compass on an outdoor Solar Tracker, to give some verification that it's pointing in the right direction. The magnetometer may be mounted close to large motors and metal mounting brackets, which will have major effects on the accuracy. The motors are permanent magnet stepper motors, causing huge 'hard field' problems even when they are not running. Both the proximity of the motors and of the mounting brackets will change as the positioning system moves about. The calibration is _variable_. The traditional calibration method did not work.
 
 The Z-axis is not needed for a simple compass application. Can the Z-axis can be used to compensate the X and Y axes for the variable hard and soft fields? ...
 
 
-
 ## Installing the Library with the Arduino IDE
 
-Download the latest Zip file via the green button on this library's Github screen, "<> Code / Download Zip". This creates a file called "QMC5883PMagnetometer-main.zip" in your Downloads directory.
+Search for 'mumanchu' in the Arduino IDE's Library Manager and see if the QMC5883PMagnetometer library is there. If found, just install it from there.
+
+If not, download the latest Zip file via the green button on this library's Github screen, "<> Code / Download Zip". This creates a file called "QMC5883PMagnetometer-main.zip" in your Downloads directory.
 
 Now open the Arduino IDE. Select menu item "Sketch / Include Library > Add ZIP Library...". This opens the "Select ZIP File" window. Open the Downloads directory and choose the "QMC5883PMagnetometer-main.zip" file you just downloaded. You should see a "Successfully installed library" popup on the bottom right.
 
@@ -146,7 +142,8 @@ To open the example sketch, select menu item "File > Examples" and scroll down b
 
 To find out what each method does, open the [QMC5883PMagnetometer.h](src/QMC5883PMagnetometer.h) file and read the comments for each method. The rest is explained in the data sheet, so I won't reproduce it here.
 
-The main application is to calculate degrees from north, `getDegreesFromNorth()`. To keep it stable a number of readings are averaged, see `begin( , uint degreesFromNorthSamples)`. 
+The library's main application is to calculate degrees from north, `getDegreesFromNorth()`. To keep it stable, a number of readings are averaged, see `begin( , uint degreesFromNorthSamples)`. 
+
 
 ```cpp
 class QMC5883PMagnetometer
@@ -196,7 +193,7 @@ Everything else is self-explanatory, except maybe the 'Self Test' and the 'Set/R
 
 P16 of the data sheet states, "an inner-built current is generated and an additional signal is added to the sensor, generating a difference in the 3 axis value. User should record the value before and after the self-test and compare with a threshold value." That's not enough information.
 
-I think the self test results are actually 'range' values. These are the range produced by an on-chip-generated field of about 1 Gauss, which will override any weaker external fields. These can be used as ball-park range values (instead of the calibration), remembering that the Earth's magnetic field is less than 1 Gauss. What we do not get from the self test are the 'offsets'.
+I think the self test results are actually 'range' values. These are the ranges produced by an on-chip-generated field of about 1 Gauss, which overrides any weaker external fields. These can be used as ball-park range values (instead of the calibration), remembering that the Earth's magnetic field is less than 1 Gauss. What we do not get from the self test are the 'offsets'.
 
 
 
@@ -239,7 +236,7 @@ https://github.com/Turbofan3360/ESP32-Micropython-GY-271-QMC5883P-Driver
 
 | Date  | Revision | Description |
 |:---------- |:---------|:----------- |
-| 2026.10.24 | 0.0.0	| Preliminary |
+| 2026.10.24 | 1.0.0	| First release |
 
 
 ## Joke of the Week
