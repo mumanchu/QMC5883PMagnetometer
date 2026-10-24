@@ -2,29 +2,32 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 // Optimized Rolling Average Filter
-// Copyright (C) https://muman.ch + https://github.com/mumanchu, 2026.10.23
+// Copyright (C) https://muman.ch + https://github.com/mumanchu, 2026.10.24
 // If you re-use this software, please include the above copyright notice
 /*
-Averages values of any numerical data type. The data type of the sum value SUMTYPE can
-also be defined.
+Averages values of any numerical data type. The data type of the sum value 
+SUMTYPE can also be defined.
 
-For float and double, SUMTYPE can be omitted, so SUMTYPE is float or double by default.
+For float and double, SUMTYPE can be omitted, so SUMTYPE is float or double 
+by default.
 
-For integer types, the SUMTYPE must be able to hold 'MAXVALUE * numberOfSamples' without
-overflowing or underflowing. e.g. for a 16-bit 'int' you should use a 32-bit 'long',
-else the sum may overflow/underflow. This is not checked by the compiler.
-On a 32-bit machine, 'int' and 'long' are both 32 bits, so you may need to use 'long long'
-(64 bits) or int64_t if the sum is very large.
+For integer types, the SUMTYPE must be able to hold 'MAXVALUE * numberOfSamples' 
+without overflowing or underflowing. e.g. for a 16-bit 'int' you should use a 
+32-bit 'long', else the sum may overflow/underflow. This is not checked by the 
+compiler. On a 32-bit machine, 'int' and 'long' are both 32 bits, so you may 
+need to use 'long long' (64 bits) or int64_t if the sum is very large.
 
-If you are averaging 10-bit analog input values (0..1023) on an 8 or 16-bit processor
-(16-bit integers), then you can use 'unsigned int' for both because it will not overflow
-if you don't sum more than 64 values. This is faster than using 'long'.
+If you are averaging 10-bit analog input values (0..1023) on an 8 or 16-bit 
+processor (16-bit integers), then you can use 'unsigned int' for both because 
+it will not overflow if you don't sum more than 64 values. This is faster than 
+using 'long'.
 
-But if you use 'float' for averaging integer values you will get a much smoother result.
-This removes the 'step effect' you can get when reading narrow-range analogue inputs.
+But if you use 'float' for averaging integer values you will get a much smoother 
+result. This removes the 'step effect' you can get when reading narrow-range 
+analogue inputs.
 
-As usual, all methods must be called from the same thread (i.e. not from an interrupt),
-else use some kind of mutex lock.
+As usual, all methods must be called from the same thread (i.e. not from an 
+interrupt), else use some kind of mutex lock.
 */
 
 template <typename T, typename SUMTYPE = T>
