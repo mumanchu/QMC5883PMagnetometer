@@ -2,7 +2,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Arduino Library for QMC5833P 3-Axis Magnetometer
-// Copyright (C) https://muman.ch + https://github.com/mumanchu, 2026.10.16
+// Copyright (C) https://muman.ch + https://github.com/mumanchu, 2026.10.24
 // If you re-use this software, please include the above copyright notice
 // For details see,
 // https://github.com/mumanchu/QMC5883PMagnetometer
@@ -51,7 +51,7 @@ public:
 	// Range values from selfTest()
 	int testRangeX, testRangeY, testRangeZ;
 
-	// Calibration factors from rotationalCalibration()
+	// Calibration factors from rotationCalibration()
 	float offsetX, offsetY, offsetZ;
 	float scaleX, scaleY, scaleZ;
 
@@ -67,7 +67,7 @@ public:
 	float getGauss(int measurement);
 	uint getDegreesFromNorth(int x, int y, int z, 
 		uint declinationDegrees, uint declinationMinutes);
-	bool rotationalCalibration();
+	bool rotationCalibration();
 	bool applyCalibration(int x, int y, int z, int* xc, int* yc, int* zc);
 
 private:
@@ -93,7 +93,7 @@ bool QMC5883PMagnetometer::begin(TwoWire* twoWire, uint degreesFromNorthSamples 
 	testRangeY = 0;
 	testRangeZ = 0;
 
-	// from rotationalCalibration();
+	// from rotationCalibration();
 	offsetX = 0.0f;
 	offsetY = 0.0f;
 	offsetZ = 0.0f;
@@ -402,28 +402,29 @@ uint QMC5883PMagnetometer::getDegreesFromNorth(int x, int y, int z,
 }
 
 
-// Standard rotational calibration, where each axis of the sensor must be 
-// rotated through 360 degrees. Returns true when the calibration is complete, 
-// or false if it fails (insufficient movement) or times out.
-// NOTES
-// This procedure saves the max and min values for each axis. The difficult 
-// bit is determining when the calibration is complete. One way to do that is 
-// to check the range between min and max (maybe compare with the selfTest() 
-// results). This version just uses a timer, assuming calibration is complete 
-// of no change has occured for (say) 15 seconds.
+// Simple rotation calibration, where each axis of the sensor is rotated 
+// through 360 degrees. Returns true when the calibration is complete, or 
+// false if it fails (insufficient movement), or times out. 
+// NOTES 
+// This procedure saves the max and min values (OUTLIERS) for each axis. 
+// The difficult bit is determining when the calibration is complete. One 
+// way to do that is to check the range between min and max (maybe compare 
+// with the selfTest() results). 
+// This version just uses a timer, assuming calibration is complete if no 
+// change has occured for (say) 10 seconds.
 // After calibration, the offsetX/Y/Z and scaleX/Y/Z values should be saved 
-// in nonvolatile memory and restored on startup, to save re-calibration.
-// The results are all over the place (not repeatable), OUTLIERS problem?
+// in nonvolatile memory and restored on startup, to save re-calibration. 
+// The results are all over the place (not repeatable), OUTLIERS problem? 
 
 //TODO implement an error number return value instead of just bool
 
-// Normally patched out unless you want to experiment
+// Normally patched out, unless you want to experiment
 #ifdef QMC5883P_ENABLE_CALIBRATION
 
-bool QMC5883PMagnetometer::rotationalCalibration()
+bool QMC5883PMagnetometer::rotationCalibration()
 {
 	const uint timeoutInSeconds = 60;
-	const uint noChangesTimeInSeconds = 15;
+	const uint noChangesTimeInSeconds = 10;
 
 	#ifdef DEBUG
 	char buf[256];		// for sprintf()
@@ -682,4 +683,3 @@ bool QMC5883PMagnetometer::writeReg(QMC5883P_REG reg, byte data)
 	}
 	return true;
 }
-
