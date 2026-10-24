@@ -23,7 +23,7 @@ typedef unsigned short ushort;  // 16 bits
 // true if sprintf() supports floats
 bool floatSupportedInSprintf = false;
 
-// Un-patch this to run the rotationalCalibration() tests
+// Un-patch this to run the rotationCalibration() tests
 //#define QMC5883P_ENABLE_CALIBRATION
 
 #include "QMC5883PMagnetometer.h"
@@ -64,7 +64,7 @@ void setup()
 	Wire.setClock(400000);
 	Wire.setTimeout(100);
 
-	if (!compass.begin(&Wire, 20)) {
+	if (!compass.begin(&Wire, 23)) {
 		LOGERROR("compass.begin() failed");
 		while (1)
 			yield();
@@ -76,7 +76,9 @@ void setup()
 	}
 
 	// configure the QMC5333P before running the self-test
-	compass.configure(2, 0, 0);		// 100Hz sampling
+	// this configuration should match the run-time configuration
+	// so the results are relative to the run-time results
+	compass.configure(1, 0, 0);		// 50Hz sampling
 	compass.setRange(3);			// 2 Gauss range
 	compass.setOperatingMode(1);	// normal mode
 
@@ -87,7 +89,7 @@ void setup()
 	}
 
 
-	// This calls rotationalCalibration() continuously,
+	// This calls rotationCalibration() continuously,
 	// so you can see if it works, or not
 	#ifdef QMC5883P_ENABLE_CALIBRATION
 
@@ -102,13 +104,13 @@ void setup()
 		Serial.flush();
 
 		// un-patch this in QMC5882PMagnetometer.h
-		if (!compass.rotationalCalibration()) {
-			LOGERROR("compass.rotationalCalibration() failed");
+		if (!compass.rotationCalibration()) {
+			LOGERROR("compass.rotationCalibration() failed");
 			delay(3000);
 			continue;
 		}
 
-		// in case I2C hangs
+		// in case I2C hangs while you're moving the sensor about
 		void resetI2C(TwoWire * wire);
 		resetI2C(&Wire);
 
@@ -117,7 +119,7 @@ void setup()
 	#endif
 
 	// re-configure the QMC5333P for normal use
-	compass.configure(2, 0, 0);		// 100Hz sampling
+	compass.configure(1, 0, 0);		// 50Hz sampling
 	compass.setRange(3);			// 2 Gauss range
 	compass.setOperatingMode(1);	// normal mode
 
@@ -174,8 +176,9 @@ void loop()
 	}
 }
 
-// Unlock the I2C bus, the QMC5883P chip sometimes hangs the bus 
-// when calibrating, could be a bad I2C connection
+// Unlock the I2C bus, the QMC5883P chip sometimes hangs the bus, 
+// probably because of an intermittent I2C connection (but the chip 
+// should handle that itself!)
 void resetI2C(TwoWire* wire)
 {
 	wire->end();
@@ -184,5 +187,3 @@ void resetI2C(TwoWire* wire)
 	wire->setClock(400000);
 	wire->setTimeout(100);
 }
-
-
