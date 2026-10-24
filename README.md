@@ -94,7 +94,7 @@ The few descriptions I have found about magnetometer calibration all show circul
 
 When multiple readings are taken, you can see that the max and min values for each channel are not the same. This is because of the directional effects of nearby magnetic fields (hard effects), nearby metallic (ferrous and non-ferrous) objects which distort the Earth's magnetic field (soft effects), and irregularities within the chip itself. The chip cannot tell the difference, it just sees the accumulated effects on the reading from each axis.
 
-The calibrartion just normalises the offset and the range for each axis. It's easier to visualise if a simple straight-line plot is used.
+The calibration just normalises the offset and the range for each axis. It's easier to visualise if a simple straight-line plot is used.
 
 
 **Raw axis readings before calibration**
