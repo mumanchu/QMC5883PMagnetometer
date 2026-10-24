@@ -4,7 +4,7 @@
 
 The QMC5883P is the latest 3-Axis Magnetometer from QST Corporation. It supercedes the QMC5883L, and the original Honeywell HMC5883L (now obsolete). 
 
-<img width="300" alt="image" src="https://github.com/user-attachments/assets/18f1179d-1486-4ee3-a426-c4122350966e" />
+<img width="300" alt="image" src="images/qmc5883p-board.jpg" />
 
 If you buy one of these boards on AliExpress or ebay, it will probably tell you the chip is a (Honeywell) HMC5883L, but this is usually _not true_. You must check the I2C address to find out which chip it really is. These days it's usually a QMC5883P. You will need a different Arduino library for each chip.
 
