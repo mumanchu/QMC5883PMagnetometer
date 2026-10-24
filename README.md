@@ -1,5 +1,7 @@
 # Arduino Library for QMC5883P 3-Axis Magnetometer
 
+**_PRELIMINARY - May change without notice, improvements in progress, especially for calibration_**
+
 The QMC5883P is the latest 3-Axis Magnetometer from QST Corporation. It supercedes the QMC5883L, and the original Honeywell HMC5883L (now obsolete). 
 
 <img width="300" alt="image" src="https://github.com/user-attachments/assets/18f1179d-1486-4ee3-a426-c4122350966e" />
@@ -31,7 +33,7 @@ Connect the board with 3V3, GND, SDA and SCL (some boards also support 5V Arduin
   }
 ```
 
-On the chip's website page, QST Corp states, "Software and Algorithm Support Available". I tried to contact QST Corporation for more details, but received no response. There's a link to the manufacturer's data sheet and website at the end of this page. Their website looks unfinished and/or unmaintained. (But I guess most of their products are going to Ukraine or Iran, so they are rolling in it.)
+On the chip's website page, QST Corp states, "Software and Algorithm Support Available". I tried to contact QST Corporation for more details, but received no response. There's a link to the manufacturer's data sheet and website at the end of this page. Their website looks unfinished and/or unmaintained. (But I guess most of their products are going to Ukraine or Iran, so they're rolling in it anyway.)
 
 
 ## Using a 3-Axis Magnetometer as a Compass
@@ -56,7 +58,7 @@ This is a very sensitive device. Even the magnetic field from the needle of a tr
 
 You can see all these effects if you have a Digital Compass app on your phone. The phone will contain a very similar chip (or maybe even the same one). Most compass apps have a calibration procedure which involves rotating the phone around each axis. Even after calibration, they are not very accurate. They may not work at all if the phone is not horizontal. A traditional hand-held compass is more accurate and far more reliable!
 
-This library's main function is to calculate degrees from north, `getDegreesFromNorth()`. To keep it stable, a number of readings are averaged, set by `begin( , uint degreesFromNorthSamples)`. The declination value (described in the next section) is used to compensate for the angle between actual north and magnetic north, and can also be used as a simple linear calibration factor.
+This library's main function is to calculate degrees from north, `getDegreesFromNorth()`. To keep the direction stable, a number of readings are averaged, according to `begin( , uint degreesFromNorthSamples)`. The declination value (described in the next section) is used to compensate for the angle between actual north and magnetic north, and can also be used as a simple linear calibration factor.
 
 
 ## Angle of Magnetic Declination and Magnetic Inclination
@@ -75,7 +77,7 @@ The standard calibration procedure requires a full 360 degree rotation of the de
 
 Storing the max and min values is not a good idea because these will often just be OUTLIERS (irregular glitches), and the calibration will be completely wrong! During my tests this was very often the case. Detecting the outliers is quite difficult (see the ArduPlot code). Only the values which fall on the surface of a sphere whose size is determined by the range of the readings should be used (I think).
 
-Another difficulty is how to determine when the calibration is complete. Each library implementation does this in a different way. One tries to detect values looping back past the orginal value to determine a full rotation. One just waits 10 seconds and assumes that three full rotations have been done. Probably the best way is to detect even coverage of the surface of that sphere mentioned in the previous paragraph.
+Another difficulty is how to determine when the calibration is complete. Each library implementation does this in a different way. One tries to detect values looping back past the orginal value to determine a full rotation. One library just waits 10 seconds and assumes that three full rotations have been done. Probably the best way is to detect even coverage of the surface of that sphere mentioned in the previous paragraph.
 
 This library has a basic `rotationCalibration()` method, but it's patched out because the results (as with all the other libraries that have implemented this method) are very dubious. You can enable it and experiment if you like, by un-commenting `//#define QMC5883P_ENABLE_CALIBRATION` in the example sketch. To determine when calibration is complete, this version just waits 10 seconds after the last change of a min or max value, then assumes it's complete. An alternative would be to wait until the range between the min and the max values relates to the ranges produced by the `selfTest()` method, there is some commented-out example code for this.
 
@@ -123,9 +125,9 @@ This calibration method is not recommended, unless you can remove the outliers.
 
 ## I2C Lockups
 
-The I2C bus was locked regularly by this chip if there was an intermittent connection on the I2C bus. This happened a lot while waving the sensor around during calibration. The I2C bus locks when the chip permanently holds SDA (the data line) low. If there is an error, the chip should always release the bus. I suspect this is a design issue within the chip. Perhaps these cheap chips are from batches with an error in the silicon. 
+The I2C bus locked up regularly if there was an intermittent connection on the I2C bus. This happened a lot while waving the sensor around during calibration. The I2C bus locks when the chip permanently drives SDA (the data line) low. The chip should always release the bus if there is an error, but this does not happen. Perhaps these cheap chips are from batches with an error in the silicon. 
 
-To recover, I added a `resetI2C()` method to the example sketch.
+To recover, I added a `resetI2C()` method to the example sketch, which can be called to release the bus.
 
 
 ## Solar Tracker Application
@@ -186,9 +188,9 @@ public:
 
 ## Example Sketch
 
-The example sketch does a software reset, calls the self test method, initializes the QMC5883P in 'normal mode' and polls the `RDY` status until new readings are available. The readings are then displayed on the Serial output. Floating point values are shown if they are supported by `sprintf("%f")`. The older AVR Arduinos do not support this, see `floatSupportedInSprintf`.
+The example sketch does a QMC5883P software reset, calls the self test method, initializes the QMC5883P in 'normal mode' and polls the `RDY` status until new readings are available. The readings are then displayed on the `Serial` output. Floating point values are shown if they are supported by `sprintf("%f")`. The older AVR Arduinos do not support this, see `floatSupportedInSprintf`.
 
-For old AVR Arduinos, you could use the efficient `floatToString()` function for the conversion,\
+For old AVR Arduinos, you could use the minimalist `floatToString()` function for the conversion,\
 https://github.com/mumanchu/mumanchu/blob/main/utils/Float.cpp
 
 If you un-comment `#define QMC5883P_ENABLE_CALIBRATION`, then it will call `rotationCalibration()` in a loop, so you can test how well it the calibration performs, or how badly.
@@ -202,21 +204,21 @@ Everything else is self-explanatory, except maybe the 'Self Test' and the 'Set/R
 
 ## Self Test
 
-P16 of the data sheet states, "an inner-built current is generated and an additional signal is added to the sensor, generating a difference in the 3 axis value. User should record the value before and after the self-test and compare with a threshold value." That's not enough information.
+P16 of the data sheet states, "_an inner-built current is generated and an additional signal is added to the sensor, generating a difference in the 3 axis value. User should record the value before and after the self-test and compare with a threshold value._" That's not enough information.
 
 I think the self test results are actually 'range' values. These are the ranges produced by an on-chip-generated field of about 1 Gauss, which overrides any weaker external fields. These can be used as ball-park range values (instead of the calibration), remembering that the Earth's magnetic field is less than 1 Gauss. What we do not get from the self test are the 'offsets'.
 
 I think the self test does this for each axis,
-- Take a measurement of the ambient field
-- Generate an approximate 1 Gauss offset field and take another measurement
+- Take a measurement of the ambient field, which includes the external hard and soft fields
+- Generate an internal ~1 Gauss offset field and take another measurement
 - Save the difference between the two measurements, this is the 'range' value for the axis
 
-The older QMC5883L data sheet suggested using the self-test results for temperature compensation. This is not necessary with the new QMC5883P, which does the temperatire compensation automatically.
+The older QMC5883L data sheet suggested using the self-test results for temperature compensation. This is not necessary with the new QMC5883P, which does the temperature compensation automatically.
 
 
 ## Set/Reset Mode
 
-This setting is not fully described in the data sheet. This library keeps the default setting, SET AND RESET ON. I'm not sure why you would want to disable this feature.
+This setting is not fully described in the data sheet. This library keeps the default setting, SET AND RESET ON. I'm not sure why you would want to change this.
 
 The QMC5883P set/reset mode is a configuration setting used to control the internal Anisotropic Magnetoresistive (AMR) sensor's set and reset driver to eliminate sensor offset and maintain measurement accuracy.
 
@@ -250,11 +252,11 @@ https://www.nxp.com/docs/en/application-note/AN4248.pdf
 ## Existing Libraries
 
 **ArduPilot Magnetometer Code** \
-This is the complexity you need to make these chips work reliably in drones. It supports several different chips and has very complex calibration features. \
+This is the complexity you need to make these chips work reliably in drones. It supports several different chips and has comprehesive calibration features. \
 https://github.com/ArduPilot/ardupilot/tree/master/libraries/AP_Compass
 
 **Micropython Library** \
-I never use Monty Python, but this implements a very simple version of the rotation calibration procedure,
+I never use Monty Python, but this implements a simple (not very useful) version of the rotation calibration procedure,
 https://github.com/Turbofan3360/ESP32-Micropython-GY-271-QMC5883P-Driver
 
 **Adafruit Library** \
@@ -266,7 +268,7 @@ https://github.com/adafruit/Adafruit_QMC5883P
 
 | Date  | Revision | Description |
 |:---------- |:---------|:----------- |
-| 2026.10.24 | 1.0.0	| First release |
+| 2026.10.24 | 0.0.1	| Preliminary |
 
 
 ## Joke of the Week
