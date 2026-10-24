@@ -196,7 +196,7 @@ The example sketch does a QMC5883P software reset, calls the self test method, i
 For old AVR Arduinos, you could use the minimalist `floatToString()` function for the conversion, \
 https://github.com/mumanchu/mumanchu/blob/main/utils/Float.cpp
 
-If you un-comment `#define QMC5883P_ENABLE_CALIBRATION`, then it will call `rotationCalibration()` in a loop, so you can test the calibration procedure. It did not work very well for me.
+In the example sketch, if you un-comment `#define QMC5883P_ENABLE_CALIBRATION`, then it will call `rotationCalibration()` in a loop, so you can test the calibration procedure. This king of calibration did not work very well for me.
 ```cpp
 // Un-patch this to run the rotationCalibration() tests
 //#define QMC5883P_ENABLE_CALIBRATION
