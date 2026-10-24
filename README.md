@@ -1,6 +1,6 @@
 # Arduino Library for QMC5883P 3-Axis Magnetometer
 
-**_PRELIMINARY - May change without notice, improvements in progress, especially for calibration_**
+**_PRELIMINARY - Improvements are in progress, especially for calibration_**
 
 The QMC5883P is the latest 3-Axis Magnetometer from QST Corporation. It supercedes the QMC5883L, and the original Honeywell HMC5883L (now obsolete). 
 
