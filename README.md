@@ -263,7 +263,7 @@ I never use Monty Python, but this implements a very simple (i.e. not very usefu
 https://github.com/Turbofan3360/ESP32-Micropython-GY-271-QMC5883P-Driver
 
 **Adafruit Library** \
-This minimalist Adafruit library is not recommended. The code for both I2C and SPI is present, even if you don't use SPI. It uses the unnecessary 'Adafruit_BusIO_Register' class, whose constructors generate lots of additional code, when a line or two of simple logic would do the same thing. \
+This is the simplest library. But it uses the 'Adafruit_BusIO_Register' class which I do not like - its constructors generate lots of additional code, when a line or two of simple logic would do the job. \
 https://github.com/adafruit/Adafruit_QMC5883P
 
 
