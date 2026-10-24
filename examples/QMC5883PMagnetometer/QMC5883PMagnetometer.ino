@@ -23,7 +23,7 @@ typedef unsigned short ushort;  // 16 bits
 // true if sprintf() supports floats
 bool floatSupportedInSprintf = false;
 
-// Un-patch this to run the rotationCalibration() tests
+// Uncomment this to run the rotationCalibration() tests
 //#define QMC5883P_ENABLE_CALIBRATION
 
 #include "QMC5883PMagnetometer.h"
