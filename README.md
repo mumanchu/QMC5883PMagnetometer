@@ -33,7 +33,7 @@ Connect the board with 3V3, GND, SDA and SCL (some boards also support 5V Arduin
   }
 ```
 
-On the chip's website page, QST Corp states, "Software and Algorithm Support Available". I tried to contact QST Corporation for more details, but received no response. There's a link to the manufacturer's data sheet and website at the end of this page.
+On the chip's website page, QST Corp states, "Software and Algorithm Support Available". I tried to contact QST Corporation for more details, but received no response. There's a link to the manufacturer's data sheet and website at the end of this page. If you manage to get this "Software and Algorithm Support", please let me know!
 
 
 ## Using a 3-Axis Magnetometer as a Compass
@@ -42,7 +42,7 @@ These devices are useful for detecting the strength and direction of a magnetic 
 
 The Earth's magnetic field strength is between 0.25 and 0.65 Gauss. The chip has four ranges, ±30 Gauss, ±12, ±8, and ±2 Gauss. So ±2 Gauss is a sensible range for a compass application, leaving some headroom for small external magnetic fields.
 
-The zero-crossing points of the X and Y axes occur at exactly 90 degree angles to magnetic North. But the min and max points do not fall at the midpoints between the two zero-crossings. All the libraries use the `atan2()` method to find the angle.
+The zero-crossing points of the X and Y axes occur at exactly 90 degree angles to magnetic north. But the min and max points do not fall at the midpoints between the two zero-crossings. All the libraries use the `atan2()` method to find the angle.
 
 ```
     0         90       180       270       360(0)
@@ -196,9 +196,9 @@ The example sketch does a QMC5883P software reset, calls the self test method, i
 For old AVR Arduinos, you could use the minimalist `floatToString()` function for the conversion, \
 https://github.com/mumanchu/mumanchu/blob/main/utils/Float.cpp
 
-In the example sketch, if you un-comment `#define QMC5883P_ENABLE_CALIBRATION`, then it will call `rotationCalibration()` in a loop, so you can test the calibration procedure. This kind of calibration did not work very well for me.
+In the example sketch, if you uncomment `#define QMC5883P_ENABLE_CALIBRATION`, then it will call `rotationCalibration()` in a loop, so you can test the calibration procedure. This kind of calibration did not work very well for me.
 ```cpp
-// Un-patch this to run the rotationCalibration() tests
+// Uncomment this to run the rotationCalibration() tests
 //#define QMC5883P_ENABLE_CALIBRATION
 ```
 
@@ -263,7 +263,7 @@ I never use Monty Python, but this implements a very simple (i.e. not very usefu
 https://github.com/Turbofan3360/ESP32-Micropython-GY-271-QMC5883P-Driver
 
 **Adafruit Library** \
-This is the simplest library. But it uses the 'Adafruit_BusIO_Register' class, which I do not like - its constructors generate lots of additional code, when a line or two of simple logic would do the job. \
+This is the simplest library. But it uses the 'Adafruit_BusIO_Register' class, which I do not like. \
 https://github.com/adafruit/Adafruit_QMC5883P
 
 
@@ -276,7 +276,7 @@ https://github.com/adafruit/Adafruit_QMC5883P
 
 ## Joke of the Week
 
-_What's green, flat and always points North?_
+_What's green, flat and always points north?_
 
 A magnetic field.
 
