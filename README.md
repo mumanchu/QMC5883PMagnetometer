@@ -33,7 +33,7 @@ Connect the board with 3V3, GND, SDA and SCL (some boards also support 5V Arduin
   }
 ```
 
-On the chip's website page, QST Corp states, "Software and Algorithm Support Available". I tried to contact QST Corporation for more details, but received no response. There's a link to the manufacturer's data sheet and website at the end of this page. Their website looks unfinished and/or unmaintained. (But I guess most of their products are going to Ukraine or Iran, so they don't need to try.)
+On the chip's website page, QST Corp states, "Software and Algorithm Support Available". I tried to contact QST Corporation for more details, but received no response. There's a link to the manufacturer's data sheet and website at the end of this page.
 
 
 ## Using a 3-Axis Magnetometer as a Compass
@@ -58,19 +58,21 @@ This is a very sensitive device. Even the magnetic field from the needle of a tr
 
 You can see all these effects if you have a Digital Compass app on your phone. The phone will contain a very similar chip (or maybe even the same one). Most compass apps have a calibration procedure which involves rotating the phone around each axis. Even after calibration, they are not very accurate. They may not work at all if the phone is not horizontal. A traditional hand-held compass is more accurate and far more reliable!
 
-This library's main function is to calculate degrees from north, `getDegreesFromNorth()`. To keep the direction stable, a number of readings are averaged, according to `begin( , uint degreesFromNorthSamples)`. The declination value (described in the next section) is used to compensate for the angle between actual north and magnetic north, and can also be used as a simple linear calibration factor.
+This library's main function is to calculate degrees from north, `getDegreesFromNorth()`. To keep the direction stable, a number of readings are averaged, according to `begin( , uint degreesFromNorthSamples)`. The declination value (described in the next section) is used to compensate for the angle between magnetic north and actual north, and can also be used as a simple linear calibration factor.
 
 
 ## Angle of Magnetic Declination and Magnetic Inclination
 
-The Earth's magnetic north is rarely at the North Pole. It moves about regularly (polar wandering), usually within a few degress. But every 450'000 years (±450'000 years) it flips completely. All compasses will then be pointing south instead of north. We are well overdue for the next flip. But don't worry, it takes between 1000 and 10'000 years to flip completely, so we should have time to update our software. Most hand-held compasses have a rotating dial that points to true North, so simply rotate the dial 180 degrees and you're back in business.
+The Earth's magnetic north is rarely at the North Pole. It moves about regularly (polar wandering), usually within a few degress. But every 450'000 years (±450'000 years) it flips completely. All compasses will then be pointing south instead of north. We are well overdue for the next flip. But don't worry, it takes between 1000 and 10'000 years to flip completely, so we should have time to update our software. Most hand-held compasses have a rotating dial that points to true north, so simply rotate the dial 180 degrees and you're back in business.
 
 To find the direction of true north, you will need to know the _angle of magnetic declination_, which is the angle between magnetic north and true north. This varies according to your location and the current location of the wandering magnetic pole.
 
 To find out the magnetic declination of your current location (on planet Earth), use NOAA's magnetic declination calculator, \
 https://www.ngdc.noaa.gov/geomag/calculators/magcalc.shtml#declination
 
-_The angle of magnetic inclination_ is the angle at which the magnetic field enters the Earth. At the equator, the field runs almost parallel to the surface. As you approach magnetic north the field bends downwards, and towards magnetic south it bends upwards, becoming verticle at the magnetic pole. Magnetometers work very well at the equator, with maximum X/Y readings and a low Z reading. As you move north or south and the angle of inclination increases, the readings from the X/Y axes will drop to almost nothing and the Z axis reading increases. This means that magnetometers are not usable if you are too far north or too far south because the X/Y readings are too low.
+_The angle of magnetic inclination_ is the angle at which the magnetic field enters the Earth. At the equator, the field runs almost parallel to the surface. As you approach magnetic north the field bends downwards, and towards magnetic south it bends upwards, becoming verticle at the magnetic pole. Magnetometers work very well at the equator, with maximum X/Y readings and a low Z reading. As you move north or south and the angle of inclination increases, the readings from the X/Y axes will drop to almost nothing and the Z axis reading increases. 
+
+This means that magnetometers are not usable if you are too far north or too far south because the X/Y readings are too low.
 
 ## Rotation Calibration
 
@@ -92,7 +94,7 @@ The few descriptions I have found about magnetometer calibration all show circul
 
 When multiple readings are taken, you can see that the max and min values for each channel are not the same. This is because of the directional effects of nearby magnetic fields (hard effects), nearby metallic (ferrous and non-ferrous) objects which distort the Earth's magnetic field (soft effects), and irregularities within the chip itself. The chip cannot tell the difference, it just sees the accumulated effects on the reading from each axis.
 
-All they are doing is normalising the offset and the range for each axis. It's easier to visualise if a simple straight-line plot is used.
+The calibrartion just normalises the offset and the range for each axis. It's easier to visualise if a simple straight-line plot is used.
 
 
 **Raw axis readings before calibration**
@@ -107,7 +109,7 @@ Z             zzzzzzzzzzz
           minZ|-rangeZ--|maxZ
 ```
 
-Calibration adjusts the axes so they all use the same range and the same offset, with 0 as the centre position. But this requires good calibration data, without any 'outliers'.
+Calibration adjusts the axes so they all use the same range and the same offset, with 0 as the centre position. But this requires good calibration data, without any outliers.
 
 **Calibrated readings**
 
@@ -144,9 +146,7 @@ The Z-axis is not used for a compass application, because the horizontal positio
 
 Search for 'mumanchu' in the Arduino IDE's Library Manager and look for the `QMC5883PMagnetometer` library. If found, just install it from there.
 
-If not, download the latest Zip file via using green button on this library's Github screen, "<> Code / Download Zip". This creates a file called "QMC5883PMagnetometer-main.zip" in your Downloads directory.
-
-Now open the Arduino IDE. Select menu item "Sketch / Include Library > Add ZIP Library...". This opens the "Select ZIP File" window. Open the Downloads directory and choose the "QMC5883PMagnetometer-main.zip" file you just downloaded. You should see a "Successfully installed library" message.
+If not, download the latest Zip file via using green button on this library's Github screen, "<> Code / Download Zip". This creates a file called "QMC5883PMagnetometer-main.zip" in your Downloads directory. Now open the Arduino IDE. Select menu item "Sketch / Include Library > Add ZIP Library...". This opens the "Select ZIP File" window. Open the Downloads directory and choose the "QMC5883PMagnetometer-main.zip" file you just downloaded. You should see a "Successfully installed library" message.
 
 To open the example sketch, select menu item "File > Examples" and scroll down beyond "Examples from Custom Libraries" and choose the "QMC5883PMagnetometer > QMC5883PMagnetometer" entry. This opens the "QMC5883PMagnetometer.ino" example sketch in a new Arduino IDE window.
 
@@ -263,7 +263,7 @@ I never use Monty Python, but this implements a very simple (i.e. not very usefu
 https://github.com/Turbofan3360/ESP32-Micropython-GY-271-QMC5883P-Driver
 
 **Adafruit Library** \
-This is the simplest library. But it uses the 'Adafruit_BusIO_Register' class which I do not like - its constructors generate lots of additional code, when a line or two of simple logic would do the job. \
+This is the simplest library. But it uses the 'Adafruit_BusIO_Register' class, which I do not like - its constructors generate lots of additional code, when a line or two of simple logic would do the job. \
 https://github.com/adafruit/Adafruit_QMC5883P
 
 
