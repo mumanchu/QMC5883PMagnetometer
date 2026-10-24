@@ -121,7 +121,7 @@ Z        zzzzzzzzzzzzz
          |---range---|
 ```
 
-For real calibration you need to use something like the _Levenberg–Marquardt algorithm_, but that's overkill for my applictaion.
+For real calibration you need to use something like the _Levenberg–Marquardt algorithm_, but that's overkill for my application.
 
 
 ## I2C Lockups
