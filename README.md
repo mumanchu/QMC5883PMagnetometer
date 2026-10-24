@@ -54,7 +54,7 @@ Y   0                   0                   0
 
 You will also need to add 'tilt' compensation if the sensor is not always perfectly horizontal. An Accelerometer is often used for this, but that introduces even more variables. Accelerometers have their own calibration problems too.
 
-This is a very sensitive device. Even the magnetic field from the needle of a traditional hand-held compass will affect the readings. It is also dramatically affected by being close to any electronic, magnetic or metallic objects. If your mobile phone is close by, forget it. Even non-ferrous metals will distort the Earth's magnetic field and distort the readings. Being inside a building with steel reinforcements in the concrete walls distorts the readings too. The horizontal level also has a major effect on the X/Y axis readings.
+This is a very sensitive device. Even the magnetic field from the magnetised needle of a traditional hand-held compass will affect the readings. It is also dramatically affected by being close to any electronic, magnetic or metallic objects. If your mobile phone is close by, forget it. Even non-ferrous metals will distort the Earth's magnetic field and distort the readings. Being inside a building with steel reinforcements in the concrete walls distorts the readings too. The horizontal level also has a major effect on the X/Y axis readings.
 
 You can see all these effects if you have a Digital Compass app on your phone. The phone will contain a very similar chip (or maybe even the same one). Most compass apps have a calibration procedure which involves rotating the phone around each axis. Even after calibration, they are not very accurate. They may not work at all if the phone is not horizontal. A traditional hand-held compass is more accurate and far more reliable!
 
@@ -70,7 +70,7 @@ To find the direction of true north, you will need to know the _angle of magneti
 To find out the magnetic declination of your current location (on planet Earth), use NOAA's magnetic declination calculator, \
 https://www.ngdc.noaa.gov/geomag/calculators/magcalc.shtml#declination
 
-_The angle of magnetic inclination_ is the angle at which the magnetic field enters the Earth. At the equator, the field runs almost parallel to the surface. As you approach magnetic north the field bends downwards, and towards magnetic south it bends upwards, becoming verticle at the magnetic pole. Magnetometers work very well at the equator, with maximum X/Y readings and a low Z reading. As you move north or south and the angle of inclination increases, the readings from the X/Y axes will drop to almost nothing and the Z axis reading increases. 
+_The angle of magnetic inclination_ is the angle at which the magnetic field enters the Earth. At the equator, the field runs almost parallel to the surface. As you approach magnetic north the field bends downwards, and towards magnetic south it bends upwards, becoming vertical at the magnetic pole. Magnetometers work very well at the equator, with maximum X/Y readings and a low Z reading. As you move north or south and the angle of inclination increases, the readings from the X/Y axes will drop to almost nothing and the Z axis reading increases. 
 
 This means that magnetometers are not usable if you are too far north or too far south because the X/Y readings are too low.
 
