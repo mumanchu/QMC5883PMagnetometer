@@ -358,8 +358,6 @@ bool QMC5883PMagnetometer::readMeasurements(int* x, int* y, int* z)
 // The countsPerGauss values are from the data sheet, p4
 float QMC5883PMagnetometer::getGauss(int raw)
 {
-	if (raw < 0)
-		raw = -raw;
 	return (float)raw / (float)countsPerGauss[(control2Shadow >> 2) & 0x03];
 }
 
