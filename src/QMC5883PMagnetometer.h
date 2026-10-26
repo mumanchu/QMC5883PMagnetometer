@@ -1,8 +1,8 @@
 #pragma once
 
 ///////////////////////////////////////////////////////////////////////////////
-// Arduino Library for QMC5833P 3-Axis Magnetometer
-// Copyright (C) https://muman.ch + https://github.com/mumanchu, 2026.10.24
+// Arduino Library for QMC5883P 3-Axis Magnetometer
+// Copyright (C) https://muman.ch + https://github.com/mumanchu, 2026.10.2
 // If you re-use this software, please include the above copyright notice
 // For details see,
 // https://github.com/mumanchu/QMC5883PMagnetometer
@@ -152,8 +152,8 @@ bool QMC5883PMagnetometer::softReset()
 // The numbered comments (1) .. (8) are taken directly from the data sheet
 // Test results are saved in in testRangeX, testRangeY and testRangeZ.
 // The differential for each axis is about 1 Gauss, so the results should
-// be close to the 'countsPerGauss' value (+-15%) unless the chip is 
-// faulty or there is an overwhelmingly strong external magnetic field.
+// be close to the 'countsPerGauss' value (+-15%) unless the chip is faulty 
+// or there is a very strong external magnetic field.
 // 
 // p16 states, "an inner-built current is generated and an additional signal 
 // is added to the sensor, generating a difference in the 3 axis value. User 
@@ -681,3 +681,4 @@ bool QMC5883PMagnetometer::writeReg(QMC5883P_REG reg, byte data)
 	}
 	return true;
 }
+
