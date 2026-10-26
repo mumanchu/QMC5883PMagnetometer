@@ -139,7 +139,7 @@ My application is for a rudimentary compass on an outdoor Solar Tracker for sola
 
 For this application, `getDegreesFromNorth()` is the important method. This doesn't really need complicated calibration. It can all be done with the declination offset, which can be varied a bit according to the position of the motors and brackets. A simple look-up table could be used for that.
 
-The Z-axis is not used for the compass application, because the horizontal position of the sensor will not change. Can the Z-axis can be used to compensate the X and Y axes for the variable hard and soft fields? I will be experimenting with that...
+The Z-axis is not used for the compass application, because the horizontal position of the sensor will not change. (Could the Z-axis be used to compensate the X and Y axes for the variable hard and soft fields?)
 
 
 ## Installing the Library with the Arduino IDE
@@ -256,11 +256,11 @@ https://www.nxp.com/docs/en/application-note/AN4248.pdf
 ## Existing Libraries
 
 **ArduPilot Magnetometer Code** \
-This is the complexity you need to make these chips work reliably in drones. It supports several different chips and has comprehensive calibration features. It even calibrates for the motors. \
+This is the complexity you need to make these chips work reliably in drones. It supports many different chips and has comprehensive calibration features. It even calibrates for the motors. \
 https://github.com/ArduPilot/ardupilot/tree/master/libraries/AP_Compass
 
 **Micropython Library** \
-I never use Monty Python, but this implements a very simple (i.e. not very useful) version of the rotation calibration procedure,
+I never use Monty Python (it's even worse than JavaScript), but this implements a very simple version of the rotation calibration procedure,
 https://github.com/Turbofan3360/ESP32-Micropython-GY-271-QMC5883P-Driver
 
 **Adafruit Library** \
@@ -272,7 +272,8 @@ https://github.com/adafruit/Adafruit_QMC5883P
 
 | Date  | Revision | Description |
 |:---------- |:---------|:----------- |
-| 2026.10.24 | 0.0.1	| Preliminary |
+| 2026.10.24 | 0.0.1  | Preliminary |
+| 2026.10.26 | 0.0.2  | - Example sketch does not need to call softwareReset(), that's already done by begin() <br/> - getGauss() can return -ve values |
 
 
 ## Joke of the Week
