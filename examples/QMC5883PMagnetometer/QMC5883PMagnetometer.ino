@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Example Sketch for Arduino QMC5883PMagnetometer Library
-// Copyright (C) https://muman.ch + https://github.com/mumanchu, 2026.10.24
+// Copyright (C) https://muman.ch + https://github.com/mumanchu, 2026.10.26
 // If you re-use this software, please include the above copyright notice
 // For details see,
 // https://github.com/mumanchu/QMC5883PMagnetometer
@@ -64,24 +64,21 @@ void setup()
 	Wire.setClock(400000);
 	Wire.setTimeout(100);
 
-	if (!compass.begin(&Wire, 23)) {
+	// initialize and do software reset
+	// 20 = number of samples to average for getDegreesFromNorth()
+	if (!compass.begin(&Wire, 20)) {
 		LOGERROR("compass.begin() failed");
 		while (1)
 			yield();
 	}
-	/*this is done by begin()
-	if (!compass.softReset()) {
-		LOGERROR("compass.softReset() failed");
-		while (1)
-			yield();
-	}
-	*/
+	const uint outputDataRate = 2;	// 0=10Hz, 1=50Hz, 2=100Hz, 3=200Hz
+	const uint gaussRange = 3;		// 0=30Gauss, 1=12Gauss, 2=8Gauss, 3=2Gauss
 
 	// configure the QMC5333P before running the self-test
 	// this configuration should match the run-time configuration
 	// so the results are relative to the run-time results
-	compass.configure(1, 0, 0);		// 50Hz sampling
-	compass.setRange(3);			// 2 Gauss range
+	compass.configure(outputDataRate, 0, 0);
+	compass.setRange(gaussRange);
 	compass.setOperatingMode(1);	// normal mode
 
 	if (!compass.selfTest()) {
@@ -96,8 +93,8 @@ void setup()
 	#ifdef QMC5883P_ENABLE_CALIBRATION
 
 	// configure the QMC5333P before running the calibration
-	compass.configure(3, 0, 0);		// 200Hz sampling
-	compass.setRange(3);			// 2 Gauss range
+	compass.configure(outputDataRate, 0, 0);
+	compass.setRange(gaussRange);
 	compass.setOperatingMode(1);	// normal mode
 
 	while (1) {
@@ -121,8 +118,8 @@ void setup()
 	#endif
 
 	// re-configure the QMC5333P for normal use
-	compass.configure(1, 0, 0);		// 50Hz sampling
-	compass.setRange(3);			// 2 Gauss range
+	compass.configure(outputDataRate, 0, 0);
+	compass.setRange(gaussRange);
 	compass.setOperatingMode(1);	// normal mode
 
 	// clear status, so the 1st reading is ignored
@@ -189,3 +186,5 @@ void resetI2C(TwoWire* wire)
 	wire->setClock(400000);
 	wire->setTimeout(100);
 }
+
+
