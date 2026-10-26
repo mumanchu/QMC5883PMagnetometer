@@ -69,11 +69,13 @@ void setup()
 		while (1)
 			yield();
 	}
+	/*this is done by begin()
 	if (!compass.softReset()) {
 		LOGERROR("compass.softReset() failed");
 		while (1)
 			yield();
 	}
+	*/
 
 	// configure the QMC5333P before running the self-test
 	// this configuration should match the run-time configuration
