@@ -82,9 +82,9 @@ Many implementations just store the max and min values, but this is not a good i
 
 Another difficulty is how to determine when the calibration is complete. Each library implementation does this in a different way. One tries to detect values looping back past the orginal value to determine a full rotation. One library just waits 10 seconds and assumes that three full rotations have been done. Probably the best way is to detect even coverage of the surface of that sphere mentioned in the previous paragraph.
 
-This library has a basic `rotationCalibration()` method, but it's patched out because the results (as with all the other libraries that have implemented this method) are very dubious. You can enable it and experiment if you like, by un-commenting `//#define QMC5883P_ENABLE_CALIBRATION` in the example sketch. To determine when calibration is complete, this library just waits 10 seconds after the last change of a min or max value, then assumes it's complete. An alternative way would be to wait until the range between the min and the max values relates to the ranges produced by the `selfTest()` method, there is some commented-out example code for this.
+This library has a basic `rotationCalibration()` method, but it's patched out because the results (as with all the other libraries that have implemented this method) are very dubious. You can enable it and experiment if you like, by uncommenting `//#define QMC5883P_ENABLE_CALIBRATION` in the example sketch. To determine when calibration is complete, this library just waits 10 seconds after the last change of a min or max value, then assumes it's complete. An alternative way would be to wait until the range between the min and the max values relates to the ranges produced by the `selfTest()` method, there is some commented-out example code for this.
 
-For an ideal calibration, you will need a way to accurately rotate the magnetometer and all its electronics about each axis, X, Y, Z. This is difficult to do manually. It really needs a fancy **gimbal-like rotation device**.  Any wires will make rotation difficult and the position and motion of the wires themselves will affect the fields, so you'll need WiFi or Bluetooth communications, which may affect the fields even more. The proximity of batteries, motors and mounting bolts also has a huge (and variable) effect. 
+For an ideal calibration, you will need a way to accurately rotate the magnetometer and all its electronics about each axis, X, Y, Z. This is difficult to do manually. It really needs a fancy **gimbal-like rotation device**.  Any wires will make rotation difficult and the position and motion of the wires themselves will affect the fields. WiFi and Bluetooth communications may affect the fields even more. The proximity of batteries, motors and mounting bolts also has a huge (and variable) effect. 
 
 The few descriptions I have found about magnetometer calibration all show circular plots for the readings of the three axes, using X/Y, X/Z and Y/Z axes for each plot. Before calibration, the three circular plots are in different positions. After calibration, the three circular plots are nicely superimposed over each other. If you're interested in seeing this for yourself, you can use Excel for the visualisation. Create a CSV file with a `Serial.println()` statement in `rotationCalibration()`. Import the CSV file into Excel and create three charts using the X/Y, X/Z and Y/Z axes. You will need to modify the charts to use the same axis scales for each plot, -1000 -> 0 -> +1000.
 
@@ -157,7 +157,7 @@ To find out what each method does, open the [QMC5883PMagnetometer.h](src/QMC5883
 
 The class definition and the code are in a single `.h` file, because the class will normally be referenced from only one file (`.ino` or `.cpp`) so there's no need for separate `.h` and `.cpp` files.
 
-The library's main application is to calculate degrees from north, `getDegreesFromNorth()`. To keep it stable, a number of readings are averaged, the number of samples to average is set by `begin( , uint degreesFromNorthSamples)`. Each sample uses 4 bytes (2 x 16-bit X/Y values). See [RollingAverage.h](src/RollingAverage.h).
+The library's main application is to calculate degrees from north, `getDegreesFromNorth()`. To keep it stable, a number of readings are averaged, set by `begin( , uint degreesFromNorthSamples)`. Increasing the number of samples reduces the reaction time, depending on the `outputDataRate`. Each sample uses 4 bytes of RAM (2 x 16-bit X/Y values). See [RollingAverage.h](src/RollingAverage.h).
 
 
 ```cpp
@@ -243,6 +243,7 @@ https://www.qstcorp.com/en_comp_prod/QMC5883P
 To find out the magnetic declination of your current location (on planet Earth), use this nice app from NOAA, \
 https://www.ngdc.noaa.gov/geomag/calculators/magcalc.shtml#declination
 
+If you understand matrices...
 
 **NXP/Freescale Semiconductor Application Note AN4246** \
 Calibrating an eCompass in the Presence of Hard- and Soft-Iron Interference \
@@ -263,7 +264,7 @@ I never use Monty Python, but this implements a very simple (i.e. not very usefu
 https://github.com/Turbofan3360/ESP32-Micropython-GY-271-QMC5883P-Driver
 
 **Adafruit Library** \
-This is the simplest library. But it uses the 'Adafruit_BusIO_Register' class, which I do not like. \
+This is the simplest library, with no calibration. It uses the 'Adafruit_BusIO_Register' class, which I do not like. \
 https://github.com/adafruit/Adafruit_QMC5883P
 
 
