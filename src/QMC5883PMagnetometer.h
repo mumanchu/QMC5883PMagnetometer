@@ -2,7 +2,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Arduino Library for QMC5883P 3-Axis Magnetometer
-// Copyright (C) https://muman.ch + https://github.com/mumanchu, 2026.10.2
+// Copyright (C) https://muman.ch + https://github.com/mumanchu, 2026.10.26
 // If you re-use this software, please include the above copyright notice
 // For details see,
 // https://github.com/mumanchu/QMC5883PMagnetometer
