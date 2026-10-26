@@ -135,11 +135,11 @@ To recover, I added a `resetI2C()` method to the example sketch, which can be ca
 
 ## Solar Tracker Application
 
-My application is for a rudimentary compass on an outdoor Solar Tracker, to give some verification that it's really pointing in the right direction. The magnetometer will be mounted near to large motors and metal mounting brackets, which will have major effects on the accuracy. The motors are permanent magnet motors, causing _hard field_ problems even when they are not running. Both the proximity of the motors and of the mounting brackets (_soft fields_) will change as the positioning system moves about. The calibration is _variable_, so the traditional calibration method will not work.
+My application is for a rudimentary compass on an outdoor Solar Tracker for solar panels, to give some verification that it's really pointing in the right direction. The magnetometer may be mounted near to large motors and metal mounting brackets, which will have major effects on the readings. The motors are permanent magnet motors, causing _hard field_ problems even when they are not running. Both the proximity of the motors and of the mounting brackets (_soft fields_) will change as the positioning system moves about. The calibration is _variable_, so the traditional calibration method will not work.
 
-For me, `getDegreesFromNorth()` is the important method. This doesn't really need complicated calibration. It can all be done with the declination offset, which can be varied a bit according to the position of the motors and brackets. A simple look-up table can be used for that.
+For this application, `getDegreesFromNorth()` is the important method. This doesn't really need complicated calibration. It can all be done with the declination offset, which can be varied a bit according to the position of the motors and brackets. A simple look-up table could be used for that.
 
-The Z-axis is not used for a compass application, because the horizontal position of the sensor will not change. Can the Z-axis can be used to compensate the X and Y axes for the variable hard and soft fields? I will be experimenting with that...
+The Z-axis is not used for the compass application, because the horizontal position of the sensor will not change. Can the Z-axis can be used to compensate the X and Y axes for the variable hard and soft fields? I will be experimenting with that...
 
 
 ## Installing the Library with the Arduino IDE
