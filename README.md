@@ -164,27 +164,27 @@ The library's main application is to calculate degrees from north, `getDegreesFr
 class QMC5883PMagnetometer
 {
 public:
-	// Range values from selfTest()
-	int testRangeX, testRangeY, testRangeZ;
+    // Range values from selfTest()
+    int testRangeX, testRangeY, testRangeZ;
 
-	// Calibration factors from rotationCalibration()
-	float offsetX, offsetY, offsetZ;
-	float scaleX, scaleY, scaleZ;
+    // Calibration factors from rotationCalibration()
+    float offsetX, offsetY, offsetZ;
+    float scaleX, scaleY, scaleZ;
 
-	bool begin(TwoWire* twoWire, uint degreesFromNorthSamples = 0);
-	bool softReset();
-	bool selfTest();
-	bool configure(uint outputDataRate, uint overSampling, uint downSampling);
-	bool setRange(uint range);
-	bool setOperatingMode(byte operatingMode);
-	bool readOperatingMode(byte* operatingMode);
-	bool readStatus(bool* rdy, bool* ovf);
-	bool readMeasurements(int* x, int* y, int* z);
-	float getGauss(int measurement);
-	uint getDegreesFromNorth(int x, int y, int z, 
-		uint declinationDegrees, uint declinationMinutes);
-	bool rotationCalibration();
-	bool applyCalibration(int x, int y, int z, int* xc, int* yc, int* zc);
+    bool begin(TwoWire* twoWire, uint degreesFromNorthSamples = 0);
+    bool softReset();
+    bool selfTest();
+    bool configure(uint outputDataRate, uint overSampling, uint downSampling);
+    bool setRange(uint range);
+    bool setOperatingMode(byte operatingMode);
+    bool readOperatingMode(byte* operatingMode);
+    bool readStatus(bool* rdy, bool* ovf);
+    bool readMeasurements(int* x, int* y, int* z);
+    float getGauss(int measurement);
+    uint getDegreesFromNorth(int x, int y, int z,
+        uint declinationDegrees, uint declinationMinutes);
+    bool rotationCalibration();
+    bool applyCalibration(int x, int y, int z, int* xc, int* yc, int* zc);
 };
 ```
 
@@ -272,9 +272,8 @@ https://github.com/adafruit/Adafruit_QMC5883P
 
 | Date  | Revision | Description |
 |:---------- |:---------|:----------- |
-| 2026.10.24 | 0.0.1  | Preliminary |
 | 2026.10.26 | 0.0.2  | - Example sketch does not need to call softwareReset(), that's already done by begin() <br/> - getGauss() can return -ve values |
-
+| 2026.10.24 | 0.0.1  | Preliminary |
 
 ## Joke of the Week
 
